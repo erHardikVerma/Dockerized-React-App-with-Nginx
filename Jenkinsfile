@@ -32,8 +32,8 @@ pipeline {
         stage('Run Nginx Server') {
             steps {
                 bat '''
-                docker stop %CONTAINER_NAME% || exit 0
-                docker rm %CONTAINER_NAME% || exit 0
+                docker ps -q --filter "name=%CONTAINER_NAME%" | findstr . >nul && docker stop %CONTAINER_NAME% || echo "Container not running"
+                docker ps -a -q --filter "name=%CONTAINER_NAME%" | findstr . >nul && docker rm %CONTAINER_NAME% || echo "Container not found"
                 docker run -d -p %DEPLOY_PORT%:80 --name %CONTAINER_NAME% %DOCKER_IMAGE%
                 '''
             }
